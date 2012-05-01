@@ -15,6 +15,7 @@
  */
 package com.alienlabz.util;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -83,6 +84,27 @@ final public class Reflection {
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
 		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		return o;
+	}
+
+	public static <T> T instantiate(Class<T> cls, Class<?> paramType, Object param) {
+		T o = null;
+		try {
+			Constructor<T> c = cls.getConstructor(paramType);
+			o = c.newInstance(param);
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 		return o;

@@ -15,10 +15,17 @@
  */
 package com.alienlabz;
 
+import java.util.List;
+
 import roboguice.RoboGuice;
+import android.app.Application;
 import android.content.Context;
 
 import com.alienlabz.util.Beans;
+import com.alienlabz.util.Dex;
+import com.alienlabz.util.Reflection;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 
 /**
  * Use this class to initialize the AlienDroid framework.<br/>
@@ -30,7 +37,7 @@ import com.alienlabz.util.Beans;
 final public class AlienDroid {
 
 	/**
-	 * This class can't have subclasses or be instantiated.
+	 * This class can't have subclasses nor be instantiated.
 	 */
 	private AlienDroid() {
 	}
@@ -38,10 +45,18 @@ final public class AlienDroid {
 	/**
 	 * Initialize AlienDroid.
 	 * 
-	 * @param context Android Context.
+	 * @param app Android Context.
 	 */
-	public static final void init(final Context context) {
-		Beans.setInjector(RoboGuice.getInjector(context));
+	public static final void init(final Application app) {
+		List<Class<?>> modulesClasses = Dex.getModules(app);
+		AbstractModule[] modules = new AbstractModule[modulesClasses.size() + 1];
+		for (int i = 0; i < modulesClasses.size(); i++) {
+			Class<?> cls = modulesClasses.get(i);
+			modules[i] = (AbstractModule) Reflection.instantiate(cls, Context.class, app);
+		}
+		modules[modulesClasses.size()] = RoboGuice.newDefaultRoboModule(app);
+		Injector injector = RoboGuice.setBaseApplicationInjector(app, RoboGuice.DEFAULT_STAGE, modules);
+		Beans.setInjector(injector);
 	}
 
 }

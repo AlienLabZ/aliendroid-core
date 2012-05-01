@@ -23,6 +23,9 @@ import java.util.List;
 import roboguice.util.Ln;
 import android.content.Context;
 import android.content.pm.PackageManager;
+
+import com.alienlabz.annotation.Module;
+
 import dalvik.system.DexFile;
 
 /**
@@ -73,4 +76,34 @@ final public class Dex {
 		return modelClasses;
 	}
 
+	public static List<Class<?>> getModules(final Context context) {
+		ArrayList<Class<?>> moduleClasses = new ArrayList<Class<?>>();
+		try {
+			String path = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0).sourceDir;
+			DexFile dexfile = new DexFile(path);
+			Enumeration<?> entries = dexfile.entries();
+
+			while (entries.hasMoreElements()) {
+				String name = (String) entries.nextElement();
+				Class<?> discoveredClass = null;
+				try {
+					discoveredClass = Class.forName(name, true, context.getClass().getClassLoader());
+					if (discoveredClass != null && discoveredClass.isAnnotationPresent(Module.class)) {
+						moduleClasses.add(discoveredClass);
+					}
+				} catch (ClassNotFoundException e) {
+					Ln.e("AlienDroid", e.getMessage());
+				} catch (NoClassDefFoundError e) {
+					Ln.e("AlienDroid", e.getMessage());
+				}
+			}
+
+		} catch (IOException e) {
+			Ln.e("AlienDroid", e.getMessage());
+		} catch (PackageManager.NameNotFoundException e) {
+			Ln.e("AlienDroid", e.getMessage());
+		}
+
+		return moduleClasses;
+	}
 }

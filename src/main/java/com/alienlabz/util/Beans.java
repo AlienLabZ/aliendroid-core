@@ -22,6 +22,10 @@ import com.google.inject.Injector;
 public class Beans {
 	private static Injector injector;
 
+	public static Injector getInjector() {
+		return injector;
+	}
+
 	public static void setInjector(final Injector p_injector) {
 		injector = p_injector;
 	}
