@@ -51,11 +51,15 @@ final public class Dex {
 			Enumeration<?> entries = dexfile.entries();
 
 			while (entries.hasMoreElements()) {
-				String name = (String) entries.nextElement();
+				final String name = (String) entries.nextElement();
+				if (name != null && name.indexOf("com.android") > -1) {
+					continue;
+				}
+
 				Class<?> discoveredClass = null;
 				Class<?> superClass = null;
 				try {
-					discoveredClass = Class.forName(name, true, context.getClass().getClassLoader());
+					discoveredClass = Class.forName(name, false, context.getClass().getClassLoader());
 					superClass = discoveredClass.getSuperclass();
 				} catch (ClassNotFoundException e) {
 					Ln.e("AlienDroid", e.getMessage());
