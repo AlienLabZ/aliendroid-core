@@ -17,11 +17,14 @@
  */
 package com.alienlabz.util;
 
+import roboguice.event.EventManager;
+
 import com.google.inject.Injector;
 
 public class Beans {
 	private static Injector injector;
-
+	private static EventManager eventManager;
+	
 	public static Injector getInjector() {
 		return injector;
 	}
@@ -32,6 +35,14 @@ public class Beans {
 
 	public static <T> T getBean(final Class<T> beanClass) {
 		return injector.getInstance(beanClass);
+	}
+
+	public static void setEventManager() {
+		eventManager = injector.getInstance(EventManager.class);
+	}
+
+	public static EventManager getEventManager() {
+		return eventManager;
 	}
 
 }

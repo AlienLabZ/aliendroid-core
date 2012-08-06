@@ -57,6 +57,7 @@ final public class AlienDroid {
 		modules[modulesClasses.size()] = RoboGuice.newDefaultRoboModule(app);
 		Injector injector = RoboGuice.setBaseApplicationInjector(app, RoboGuice.DEFAULT_STAGE, modules);
 		Beans.setInjector(injector);
+		Beans.setEventManager();
 	}
 
 }
